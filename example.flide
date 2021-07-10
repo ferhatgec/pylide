@@ -3,10 +3,9 @@ Begin
 
     Wait 1 New
 
-    Label "An example of Wait & New"
-    
-    Left  "An example of left aligned Label"
-
+    Left   "An example of left aligned Label"
+    Center "An example of center aligned Label"
+    Right  "An example of right aligned Label"
     Wait 1 New
 
     New

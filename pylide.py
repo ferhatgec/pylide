@@ -38,6 +38,8 @@ class Flide:
         self.is_wait = False
 
         self.is_left = False
+        self.is_center = False
+        self.is_right = False
 
         self.label_data = ''
         self.file_data = ''
@@ -57,7 +59,7 @@ class Flide:
             temp_check = token.strip()
 
             if self.is_begin:
-                if self.is_label or self.is_left:
+                if self.is_label or self.is_left or self.is_center or self.is_right:
                     if len(token) <= 1:
                         continue
 
@@ -68,6 +70,10 @@ class Flide:
 
                             if self.is_left:
                                 self.left(self.label_data)
+                            elif self.is_center:
+                                self.center(self.label_data)
+                            elif self.is_right:
+                                self.right(self.label_data)
                             else:
                                 print(self.label_data)
                             
@@ -75,7 +81,10 @@ class Flide:
 
                             self.is_label = False
                             self.is_left = False
+                            self.is_center = False
+                            self.is_right = False
                             self.is_data = False
+
                             continue
 
                     if token.startswith('"'):
@@ -85,11 +94,18 @@ class Flide:
 
                             if self.is_left:
                                 self.left(token)
+                            elif self.is_center:
+                                self.center(token)
+                            elif self.is_right:
+                                self.right(token)
                             else:
                                 print(token)
                             
                             self.is_label = False
                             self.is_left = False
+                            self.is_center = False
+                            self.is_right = False
+
                             continue
 
                         self.is_data = True
@@ -113,6 +129,10 @@ class Flide:
                     self.is_label = True
                 elif temp_check == 'Left':
                     self.is_left = True
+                elif temp_check == 'Center':
+                    self.is_center = True
+                elif temp_check == 'Right':
+                    self.is_right = True
                 elif temp_check == 'Wait':
                     self.is_wait = True
                 elif temp_check == 'New':
@@ -130,6 +150,21 @@ class Flide:
 
 
     def left(self, data: str):
+        print(data)
+    
+    def center(self, data: str):
+        for _ in range(0, int(self.w / 3) - 1):
+            print(end=' ')
+
+        print(end=f'{data}')
+
+        for _ in range(0, int(self.w / 3)):
+            print(end=' ')
+
+    def right(self, data: str):
+        for _ in range(0, int(self.w / 1.6)):
+            print(end=' ')
+
         print(data)
 
     def begin(self):
