@@ -37,10 +37,13 @@ class Flide:
 
         self.is_wait = False
 
+        self.is_left = False
+
         self.label_data = ''
         self.file_data = ''
 
         self.tokens = []
+        self.h, self.w = self.get_terminal_size()
 
         with open(filename) as data:
             for line in data:
@@ -54,7 +57,7 @@ class Flide:
             temp_check = token.strip()
 
             if self.is_begin:
-                if self.is_label:
+                if self.is_label or self.is_left:
                     if len(token) <= 1:
                         continue
 
@@ -63,10 +66,15 @@ class Flide:
                             self.label_data += token
                             self.label_data = self.label_data.strip()[:-1]
 
-                            print(self.label_data)
+                            if self.is_left:
+                                self.left(self.label_data)
+                            else:
+                                print(self.label_data)
+                            
                             self.label_data = ''
 
                             self.is_label = False
+                            self.is_left = False
                             self.is_data = False
                             continue
 
@@ -74,8 +82,14 @@ class Flide:
                         if token.endswith('"'):
                             token = token[:-1]
                             token = token[1:]
-                            print(token)
+
+                            if self.is_left:
+                                self.left(token)
+                            else:
+                                print(token)
+                            
                             self.is_label = False
+                            self.is_left = False
                             continue
 
                         self.is_data = True
@@ -97,6 +111,8 @@ class Flide:
                     exit(0)
                 elif temp_check == 'Label':
                     self.is_label = True
+                elif temp_check == 'Left':
+                    self.is_left = True
                 elif temp_check == 'Wait':
                     self.is_wait = True
                 elif temp_check == 'New':
@@ -111,6 +127,10 @@ class Flide:
                 self.refresh()
                 self.to_up()
                 continue
+
+
+    def left(self, data: str):
+        print(data)
 
     def begin(self):
         self.is_begin = True
@@ -159,6 +179,18 @@ class Flide:
     def enable_cursor():
         print(end='\x1b[?25h')
 
+    @staticmethod
+    def get_terminal_size() -> (int, int):
+        from fcntl import ioctl
+        from struct import pack, unpack
+        import termios
+        import os
+
+        with open(os.ctermid(), 'r') as fd:
+            packed = ioctl(fd, termios.TIOCGWINSZ, pack('HHHH', 0, 0, 0, 0))
+            rows, cols, h_pixels, v_pixels = unpack('HHHH', packed)
+
+        return rows, cols
 
 if len(argv) < 2:
     exit(0)
